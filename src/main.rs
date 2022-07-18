@@ -3,9 +3,9 @@ use std::process;
 use cli_tool::Config;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    //let args: Vec<String> = env::args().collect();
 
-    let config = Config::new(&args).unwrap_or_else(|err|{
+    let config = Config::new(env::args()).unwrap_or_else(|err|{
         eprintln!("Process passing args {}", err);
         //Process helps exit our code without panicing 
         process::exit(1);

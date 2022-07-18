@@ -25,30 +25,40 @@ pub struct Config {
 impl  Config{
     //Return aResult type because we want to handle an even that can lead to an error
     // i.e if a user didnt pass required argument
-   pub fn new(args: &[String]) -> Result<Config, &str> {
-        if args.len() < 3 {
-           return  Err("Not enough arguments.");
-        }else if args.len() > 3{
-            return  Err("To many arguments.");
-        }
-        let query = args[1].clone();
-        let filename = args[2].clone();
+   pub fn new(mut args: env::Args) -> Result<Config, &'static str> {
+        args.next();
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didnt get a query string.")
+        };
+
+        let filename = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didnt get a file name")
+        };
+
         let case_sensitive =  env::var("CASE_INSENSITIVE").is_err();
         Ok(Config { query, filename, case_sensitive} )
     } 
 }
 
 pub fn search<'a>(query: &str, contents: &'a str)-> Vec<&'a str> {
-
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
    
-    let mut result = Vec::new();
 
+/*
+let mut result = Vec::new();
     for line in contents.lines() {
         if line.contains(query) {
             result.push(line);
         }
     }
     result
+
+*/
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str)-> Vec<&'a str> {
